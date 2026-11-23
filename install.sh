@@ -7,6 +7,10 @@ DATA="${XDG_DATA_HOME:-$HOME/.local/share}"
 BIN="$HOME/.local/bin"
 
 cd "$ROOT"
+# A damaged environment, for example after a system cleaner, is rebuilt.
+if [ -e .venv ] && ! .venv/bin/python -c "import textual, rich.text" >/dev/null 2>&1; then
+  rm -rf -- "$ROOT/.venv"
+fi
 if command -v uv >/dev/null 2>&1; then
   uv venv --allow-existing --python 3.12 .venv
   uv pip install --python .venv/bin/python -e .

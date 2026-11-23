@@ -80,11 +80,14 @@ On other distributions, install what you want from your package manager. Missing
 | `F7` | Open a target file |
 | `F8` | Switch or create a case |
 | `F9` | Open the latest output folder |
+| `F10` | Turn animation on or off |
+| `?` | Show all keys |
 | `Ctrl+R` | Run the selected operation |
 | `Esc` | Stop a running tool |
+| `Ctrl+Y` | Copy decoded output |
 | `Ctrl+Q` | Quit |
 
-You can also open a file directly with `palimpsest path/to/file`.
+You can also drop a file on the window, or open one directly with `palimpsest path/to/file`. In a path field, `F7` opens a file browser.
 
 ## Tips for ARG makers
 

@@ -68,6 +68,11 @@ def cyberchef_page() -> str | None:
     return None
 
 
+def tilde(text: str) -> str:
+    """Shorten the home folder for display."""
+    return text.replace(str(Path.home()), "~")
+
+
 def have(binary: str) -> bool:
     return shutil.which(binary) is not None
 
@@ -84,7 +89,7 @@ class Cmd:
     def display(self) -> str:
         if not self.argv:
             return "(built in)"
-        return " ".join("••••" if a in self.secret and a else a for a in self.argv)
+        return tilde(" ".join("••••" if a in self.secret and a else a for a in self.argv))
 
 
 @dataclass(frozen=True)
@@ -94,6 +99,8 @@ class Field:
     default: str = ""
     secret: bool = False
     required: bool = False
+    path: bool = False
+    placeholder: str = ""
 
 
 @dataclass(frozen=True)
@@ -283,7 +290,7 @@ OPS: list[Op] = [
                            secret=(v.get("pass", ""),), result=str(o / "payload.bin")),
        (PASS,)),
     Op("seek", "extract", "steghide crack", "Tries a wordlist against a steghide file.",
-       "stegseek", _seek, (Field("wordlist", "wordlist path", required=True),)),
+       "stegseek", _seek, (Field("wordlist", "wordlist path", required=True, path=True),)),
     Op("ogx", "extract", "outguess read", "Extracts an outguess payload from a JPG.",
        "outguess", _outguess_read, (PASS,)),
     Op("mmrx", "extract", "modem decode", "Decodes minimodem tones from a WAV.",
@@ -294,21 +301,21 @@ OPS: list[Op] = [
     Op("stamp", "craft", "forge metadata", "Writes fiction into a copy of the file.",
        "exiftool", _stamp,
        (Field("artist", "artist"),
-        Field("date", "date  YYYY:MM:DD HH:MM:SS"),
+        Field("date", "date", placeholder="YYYY:MM:DD HH:MM:SS"),
         Field("comment", "comment"),
         Field("desc", "description"),
-        Field("lat", "latitude  decimal"),
-        Field("lon", "longitude  decimal"))),
-    Op("scrub", "craft", "scrub real metadata", "Removes your traces from a copy.",
+        Field("lat", "latitude", placeholder="decimal, like 44.9778"),
+        Field("lon", "longitude", placeholder="decimal, like -93.265"))),
+    Op("scrub", "craft", "scrub metadata", "Removes your traces from a copy.",
        "mat2", _scrub),
     Op("stege", "craft", "steghide embed", "Hides a payload in a JPG, BMP, or WAV.",
        "steghide", _steg_embed,
-       (Field("payload", "payload file", required=True), PASS)),
+       (Field("payload", "payload file", required=True, path=True), PASS)),
     Op("oge", "craft", "outguess embed", "Hides a payload in a JPG.",
        "outguess", _outguess_embed,
-       (Field("payload", "payload file", required=True), PASS)),
+       (Field("payload", "payload file", required=True, path=True), PASS)),
     Op("poly", "craft", "zip polyglot", "An image that also opens as a zip.",
-       None, _polyglot, (Field("zip", "zip file", required=True),)),
+       None, _polyglot, (Field("zip", "zip file", required=True, path=True),)),
     Op("qrmake", "craft", "make qr", "Renders text to a QR PNG.", "qrencode",
        lambda _, v, o: Cmd(["qrencode", "-m", "2", "-s", "8", "-o", str(o / "clue.png"),
                             "--", v["text"]], result=str(o / "clue.png")),
