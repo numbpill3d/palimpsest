@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "palimpsest-tui"
+version = "1.0.0"
+description = "A monochrome terminal workbench for file investigation, steganography, ciphers, and ARG craft."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["textual>=8.2,<9"]
+
+[project.scripts]
+palimpsest = "palimpsest.app:main"
+
+[project.urls]
+Repository = "https://github.com/numbpill3d/palimpsest"
+
+[tool.setuptools]
+packages = ["palimpsest"]
+
+[tool.setuptools.package-data]
+palimpsest = ["*.tcss"]
